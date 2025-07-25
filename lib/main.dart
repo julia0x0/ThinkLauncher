@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         foregroundColor: _kPrimaryColor,
         elevation: 0,
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 0,
         color: _kSurfaceColor,
         shape: RoundedRectangleBorder(

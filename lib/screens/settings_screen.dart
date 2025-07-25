@@ -39,11 +39,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<String> selectedApps = [];
   bool isLoading = false;
   String? errorMessage;
+  late TextEditingController _numAppsController;
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _numAppsController = TextEditingController(text: numApps.toString());
   }
 
   void _loadSettings() {
@@ -235,71 +237,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: numApps > 1
-                                  ? () {
-                                      setState(() {
-                                        numApps--;
-                                        if (selectedApps.length > numApps) {
-                                          selectedApps =
-                                              selectedApps.sublist(0, numApps);
-                                        }
-                                      });
-                                    }
-                                  : null,
-                              icon: const Icon(Icons.remove),
-                            ),
-                            Expanded(
-                              child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  overlayShape: SliderComponentShape.noOverlay,
-                                  valueIndicatorColor: Colors.transparent,
-                                  valueIndicatorTextStyle:
-                                      const TextStyle(color: Colors.black),
-                                  thumbShape: const RoundSliderThumbShape(
-                                    enabledThumbRadius: 12,
-                                    elevation: 0,
-                                    pressedElevation: 0,
-                                  ),
-                                  trackHeight: 2,
-                                  activeTrackColor: Colors.black,
-                                  inactiveTrackColor: Colors.grey,
-                                  thumbColor: Colors.black,
-                                  overlayColor: Colors.transparent,
-                                ),
-                                child: Slider(
-                                  value: numApps.toDouble(),
-                                  min: 1,
-                                  max: 20,
-                                  divisions: 19,
-                                  label: numApps.toString(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      numApps = value.toInt();
-                                      if (selectedApps.length > numApps) {
-                                        selectedApps =
-                                            selectedApps.sublist(0, numApps);
-                                      }
-                                    });
-                                  },
-                                ),
+                        child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              overlayShape: SliderComponentShape.noOverlay,
+                              valueIndicatorColor: Colors.transparent,
+                              valueIndicatorTextStyle:
+                                  const TextStyle(color: Colors.black),
+                              thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 12,
+                                elevation: 0,
+                                pressedElevation: 0,
                               ),
+                              trackHeight: 2,
+                              activeTrackColor: Colors.black,
+                              inactiveTrackColor: Colors.grey,
+                              thumbColor: Colors.black,
+                              overlayColor: Colors.transparent,
                             ),
-                            IconButton(
-                              onPressed: numApps < 20
-                                  ? () {
-                                      setState(() {
-                                        numApps++;
-                                      });
+                            child: TextFormField(
+                              controller: _numAppsController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: "Number of apps",
+                                icon: Icon(Icons.numbers),
+                              ),
+                              onChanged: (value) {
+                                var parsed = int.tryParse(value);
+                                if (parsed != null) {
+                                  setState(() {
+                                    numApps = parsed;
+                                    if (selectedApps.length > numApps) {
+                                      selectedApps =
+                                          selectedApps.sublist(0, numApps);
                                     }
-                                  : null,
-                              icon: const Icon(Icons.add),
+                                  });
+                                }
+                              },
                             ),
-                          ],
+                          ),
                         ),
-                      ),
 
                       // 2. Number of columns
                       const Padding(
